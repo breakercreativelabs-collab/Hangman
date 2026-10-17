@@ -76,7 +76,9 @@ class AGEN3D_OT_pasang(bpy.types.Operator):
             self.report({"INFO"}, f"Installed to {kerja} ({r['wheel']} Python packages, {r['proyek_baru']} new project files)")
         entri = koneksi.entri_mcp(kerja, bpy.app.binary_path)
         calon = [self.config] if self.config else koneksi.jalur_config_claude()
-        ada = [c for c in calon if os.path.isdir(os.path.dirname(c))] or calon[:1]
+        # Windows: tulis ke %APPDATA%\Claude DAN lokasi Microsoft Store bila ada (uji Windows pertama 2026-10-17:
+        # hanya lokasi Store yang ditulis karena %APPDATA%\Claude belum ada, dan Claude tidak memuat server)
+        ada = calon if not self.config else calon[:1]
         try:
             for c in ada:
                 koneksi.tulis_config(c, idn["slug"], entri)
