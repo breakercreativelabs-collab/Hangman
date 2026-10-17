@@ -18,6 +18,7 @@ sungguhan) di runner tunggal. Setiap aturan punya uji negatif.
 | K-09 | Perintah CLI lulus = kode 0 **dan** berkas yang dijanjikan ada | cli | perintah tanpa berkas yang dijanjikan |
 | K-10 | Respons dibatasi: HASIL ≤ 8000 karakter (lengkap di hasil.json), log ≤ 20 baris × 300, teks ≤ 60k, gambar ≤ 700 KB | konektor K-10 | HASIL 500 ribu karakter |
 | K-12 | Status job tidak pernah "terputus" palsu: selesai.json dibaca ulang setelah kunci lepas; masa mulai berlaku juga saat lock ada tapi belum dikunci; pembungkus mencoba kunci 2 s | ekstensi KE-06 (uji ujung-ke-ujung menemukannya: pion selesai kode 0 tetapi status "terputus") | konektor K-12 (uji ras deterministik: kode lama -> 'terputus' palsu) |
+| K-13 | Ekstensi per OS membawa SEMUA dependensi dengan penanda OS target (pip menilai penanda dengan OS yang menjalankannya); paket dibuka dengan `site.addsitedir` agar .pth jalan | rilis KR-08 + negatif "tanpa pywin32" | uji Windows pertama: mcp butuh pywin32 di Windows -> "Server disconnected" |
 | K-11 | Konektor (Python sistem) tidak mengimpor bpy/mathutils/inti/modul, kecuali `eksekusi.py` (di dalam Blender) | struktur (f) | pohon sintetis `konektor/server.py` mengimpor bpy + inti |
 
 ## Riwayat cacat

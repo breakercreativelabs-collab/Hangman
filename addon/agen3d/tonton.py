@@ -102,14 +102,25 @@ def tumbuh(ob, sekarang):
     return t >= 1.0
 
 
-def _bingkai():
+def _bingkai(ob):
+    """Tampilkan model di Local View (hanya model ini, langsung di-zoom) tanpa mengubah scene pengguna.
+    Uji Windows pertama 2026-10-17: pion 53 mm (ukuran asli) tersembunyi di dalam kubus bawaan 2 m."""
+    for o in bpy.context.view_layer.objects:
+        o.select_set(o == ob)
+    bpy.context.view_layer.objects.active = ob
     for win in bpy.context.window_manager.windows:
         for area in win.screen.areas:
-            if area.type == "VIEW_3D":
-                region = next(r for r in area.regions if r.type == "WINDOW")
-                with bpy.context.temp_override(window=win, area=area, region=region):
+            if area.type != "VIEW_3D":
+                continue
+            ruang = area.spaces.active
+            ruang.clip_start = min(ruang.clip_start, 0.0005)  # benda milimeter tidak terpotong saat di-zoom dekat
+            region = next(r for r in area.regions if r.type == "WINDOW")
+            with bpy.context.temp_override(window=win, area=area, region=region):
+                if ruang.local_view is None:
+                    bpy.ops.view3d.localview(frame_selected=True)
+                else:
                     bpy.ops.view3d.view_selected()
-                return
+            return
 
 
 def tik():
@@ -134,9 +145,10 @@ def tik():
     ob = tampilkan(me)
     _keadaan["tampil"] = i
     if i == 0:
-        ob.select_set(True)
-        bpy.context.view_layer.objects.active = ob
-        _bingkai()
+        try:
+            _bingkai(ob)
+        except Exception:  # noqa: BLE001 - framing gagal tidak boleh menghentikan pemantau
+            pass
     print(f"[tonton] {os.path.basename(folder)} langkah {i + 1}/{len(d['langkah'])}: {d['langkah'][i]['nama']}")
     return 0.03
 
