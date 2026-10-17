@@ -1,0 +1,41 @@
+name: Kiriman belajar (cacat / selera)
+description: Bantu agen makin pintar. Lampirkan kiriman.json dari perintah `belajar ekspor --setuju 1`.
+title: "[belajar] "
+labels: ["kiriman-belajar"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Kiriman ini sudah dibersihkan otomatis (path, email, nama pengguna, berkas klien, token) dan lolos audit KB-01..06.
+        Periksa isinya sekali lagi sebelum mengirim. JANGAN lampirkan gambar/berkas klien.
+  - type: dropdown
+    id: jenis
+    attributes:
+      label: Jenis
+      options: [cacat, selera, keduanya]
+    validations: {required: true}
+  - type: input
+    id: modul
+    attributes:
+      label: Modul
+      placeholder: perakit / product_shot / modeling_referensi / tvc / prosedural
+  - type: textarea
+    id: ringkasan
+    attributes:
+      label: Ringkasan (1-3 kalimat)
+      description: Apa yang salah / apa yang Anda sukai, dilihat dari mata Anda.
+    validations: {required: true}
+  - type: textarea
+    id: kiriman
+    attributes:
+      label: Isi kiriman.json
+      description: Tempel isi berkas atau seret berkasnya ke sini.
+      render: json
+    validations: {required: true}
+  - type: checkboxes
+    id: izin
+    attributes:
+      label: Izin
+      options:
+        - label: Saya setuju kiriman ini dipakai untuk membuat aturan QC/preset baru di proyek open source ini (GPL-3.0-or-later).
+          required: true

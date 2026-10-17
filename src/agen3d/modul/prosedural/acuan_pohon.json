@@ -1,0 +1,56 @@
+{
+ "catatan": "Metrik acuan regresi pohon v3 (POHON: preset + seed tetap), dihasilkan kode spike lama sebelum refactor (Tugas 9). Generator deterministik: laporan harus sama persis.",
+ "laporan": [
+  {
+   "pohon": "rindang seed 7",
+   "titik_cabang": 1349,
+   "ujung_ranting": 310,
+   "daun": 5278,
+   "tinggi_m": 7.89,
+   "lebar_tajuk_m": 7.07,
+   "radius_batang_m": 0.32,
+   "QC_titik_menumpuk": 0,
+   "QC_gumpalan_daun_maks_x_median": 5.2,
+   "QC_daun_di_bawah_tanah": 0,
+   "radius_cabang_min_max_m": [
+    0.022,
+    0.32
+   ]
+  },
+  {
+   "pohon": "rindang seed 21",
+   "titik_cabang": 1299,
+   "ujung_ranting": 300,
+   "daun": 5064,
+   "tinggi_m": 7.97,
+   "lebar_tajuk_m": 6.96,
+   "radius_batang_m": 0.32,
+   "QC_titik_menumpuk": 0,
+   "QC_gumpalan_daun_maks_x_median": 5.2,
+   "QC_daun_di_bawah_tanah": 0,
+   "radius_cabang_min_max_m": [
+    0.022,
+    0.32
+   ]
+  },
+  {
+   "pohon": "kerucut seed 7",
+   "titik_cabang": 720,
+   "ujung_ranting": 183,
+   "daun": 3864,
+   "tinggi_m": 7.64,
+   "lebar_tajuk_m": 4.4,
+   "radius_batang_m": 0.24,
+   "QC_titik_menumpuk": 0,
+   "QC_gumpalan_daun_maks_x_median": 4.4,
+   "QC_daun_di_bawah_tanah": 0,
+   "radius_cabang_min_max_m": [
+    0.022,
+    0.24
+   ]
+  }
+ ],
+ "stat": {
+  "duplikat_dicegah": 219
+ }
+}

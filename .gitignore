@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+artefak/
+klien/
+lib/
+.venv/
+*.blend
+*.blend1
+proyek/*/hasil/

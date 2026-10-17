@@ -1,0 +1,33 @@
+# Set catur lengkap di papan (2026-10-17): 6 jenis bidak dari prompt (perakit) disusun di posisi awal, untuk menilai
+# KESERASIAN SET (tinggi, alas, gaya) - bukan bidak satu per satu. Clay dua warna; tekstur ditunda (keputusan pengguna).
+# Satuan mm. Papan: a1 di kiri bawah dari sisi putih (-Y), petak a1 gelap.
+
+[set]
+nama = "SET CATUR (PERAKIT)"
+kotak_mm = 57.0          # [F] FIDE: petak 50-60 mm; alas raja 45 mm / 57 = 0,79 (panduan alas raja 75-78% petak)
+tebal_papan_mm = 14.0
+bingkai_mm = 22.0
+putih = "#CFC6B6"        # clay gading (pembeda warna, bukan tekstur)
+hitam = "#1C1612"        # clay eboni
+petak_terang = "#B9A586"
+petak_gelap = "#4A3A2C"
+bingkai = "#2E241C"
+eksposur = -1.7         # -1,0: bidak putih terlalu terang (ukiran hilang)
+# [az, el, jarak mm, target z, target x, target y]  az 0 = dari sisi putih
+tampak = [[20, 32, 900, 20, 0, 0], [-140, 26, 900, 20, 0, 0], [12, 9, 420, 45, 0, -171], [-30, 14, 330, 45, -100, -171]]
+sumber = [
+  "https://www.chess.com/article/view/chess-board-dimensions",
+  "https://uschess.discourse.group/t/chess-set-board-size-standards/20746",
+]
+
+[bidak]
+raja = "proyek/raja_catur/rancangan.toml"
+ratu = "proyek/ratu_catur/rancangan.toml"
+gajah = "proyek/gajah_catur/rancangan.toml"
+kuda = "proyek/kuda_catur_aset/rancangan.toml"   # jalur aset (CC-BY 4.0, atribusi di rancangannya)
+benteng = "proyek/benteng_catur/rancangan.toml"
+pion = "proyek/pion_catur/rancangan.toml"
+
+# Bila aset kuda belum diunduh ke klien/ (mis. paket publik): kuda dari prompt (v2) dipakai, dicatat di log.
+[bidak_cadangan]
+kuda = "proyek/kuda_catur_v2/rancangan.toml"

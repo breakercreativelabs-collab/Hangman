@@ -1,0 +1,49 @@
+# Rancangan bentuk: bidak BENTENG catur gaya Staunton (anak tangga ke-2 setelah pion; skill /modeling-prompt).
+# Satuan mm; Z = tinggi. [F] fakta bersumber, [A] anatomi Staunton umum, [D] keputusan desain.
+# Jenis bentuk = bubut + takik puncak -> resep `putar` (dengan cekungan atas) + 2 `kurangi_kotak` bersilang.
+
+[objek]
+nama = "benteng catur"
+tinggi_mm = 56.0        # [F] benteng 2,20" = 56 mm pada set raja 3,75" (chessbazaar; pion set sama 53 mm)
+diameter_alas_mm = 38.0 # [F] alas benteng 1,49" = 38 mm (chessbazaar, set sama)
+voxel_mm = 0.2
+gabung_halus_mm = 0.0
+target_segitiga = 90000
+batas_mm = [[-21.0, -21.0, -1.0], [21.0, 21.0, 58.0]]
+sumber = [
+  "https://chessbazaar.com/products/the-professional-staunton-series-chess-pieces-in-black-dyed-natural-white-solid-plastic-3-75-king",
+]
+
+# Profil (r, z) [A]: alas bertingkat (gaya pion, skala r 19), menara silinder sedikit mengecil ke atas, cincin kerah,
+# mahkota melebar (r 13,8) dengan dinding tegak, puncak cekung (lantai z 52,5, dinding dalam r 10,4).
+[[bagian]]
+nama = "badan bubut"
+resep = "putar"
+profil_halus = 0.25
+profil_tajam = [1, 2, 3, 28, 29, 30, 31, 32]   # sudut dasar + tepi mahkota/cekungan tetap tegas
+profil = [[0.0, 0.0], [18.4, 0.0], [19.0, 0.7], [19.0, 3.0], [18.2, 3.8], [16.8, 4.3], [17.0, 5.2], [17.8, 6.2],
+          [17.8, 7.4], [16.6, 8.4], [14.6, 9.2], [14.2, 10.4], [14.8, 11.4], [14.6, 12.4], [13.4, 13.2],
+          [12.4, 14.2], [11.6, 17.0], [11.0, 22.0], [10.6, 28.0], [10.4, 34.0], [10.5, 38.0], [11.6, 39.0],
+          [12.0, 40.0], [11.4, 40.8], [10.8, 41.6], [11.2, 43.5], [12.6, 46.5], [13.6, 49.0], [13.8, 51.0],
+          [13.8, 56.0], [10.4, 56.0], [10.4, 52.5], [0.0, 52.5]]
+
+# Takik mahkota [D]: 2 celah bersilang lebar 3,4 mm, dalam 4 mm (lantai z 52) -> 4 benteng kecil (merlon).
+[[detail]]
+nama = "celah mahkota X"
+jenis = "kurangi_kotak"
+pusat = [0.0, 0.0, 55.0]
+setengah = [16.0, 1.7, 3.0]
+r = 0.3
+
+[[detail]]
+nama = "celah mahkota Y"
+jenis = "kurangi_kotak"
+pusat = [0.0, 0.0, 55.0]
+setengah = [1.7, 16.0, 3.0]
+r = 0.3
+
+[qc]
+toleransi_tinggi_mm = 0.5
+toleransi_diameter_mm = 0.4
+toleransi_simetri_mm = 0.3
+maks_poligon = 150000

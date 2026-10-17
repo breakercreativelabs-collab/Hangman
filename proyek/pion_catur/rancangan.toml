@@ -1,0 +1,37 @@
+# Rancangan bentuk: bidak PION catur gaya Staunton (prompt: "sekarang coba bidak catur pion").
+# Skill /modeling-prompt. Satuan mm; Z = tinggi (0 = alas). [F] fakta bersumber, [A] anatomi bidak Staunton
+# (pengetahuan umum: alas bubut bertingkat -> badan lonceng menyempit -> kerah piringan -> bola kepala).
+# Jenis bentuk = benda bubut murni -> SATU resep `putar` (pelajaran 2: pilih resep sesuai jenis bentuk).
+# Tanpa juri banding: unduh gambar referensi web diblokir kebijakan jaringan cloud.
+
+[objek]
+nama = "pion catur"
+tinggi_mm = 53.0        # [F] pion 2,08" = 53 mm pada set raja 3,75" (chessbazaar Pro Staunton; kuda set yang sama 61 mm)
+diameter_alas_mm = 32.0 # [F] alas pion 1,25" = 32 mm (chessbazaar, set sama)
+voxel_mm = 0.2
+gabung_halus_mm = 0.0
+target_segitiga = 80000
+sumber = [
+  "https://chessbazaar.com/products/the-professional-staunton-series-chess-pieces-in-black-dyed-natural-white-solid-plastic-3-75-king",
+  "https://en.wikipedia.org/wiki/Chess_set",
+]
+
+# Profil (r, z) dari bawah ke puncak [A]: cincin dasar r16 + alur, manik r15,2, cekung, torus kecil; badan lonceng
+# menyempit ke batang r5,2 (z 29); kerah piringan r9 tebal ~1,8 (z 32,4-34,2); leher r4,4; bola R7,3 pusat z45,7.
+[[bagian]]
+nama = "badan bubut"
+resep = "putar"
+profil_halus = 0.25     # rev 1: kurva Catmull-Rom; rev 0 ruas lurus -> pita cincin terlihat di bola & badan
+profil_tajam = [1, 2, 3, 41]   # rev 1b: sudut dasar & puncak tetap persis (tanpa ini kurva melengkung keluar 0,3 mm)
+profil = [[0.0, 0.0], [15.4, 0.0], [16.0, 0.6], [16.0, 2.6], [15.3, 3.3], [14.2, 3.8], [14.4, 4.6], [15.2, 5.6],
+          [15.2, 6.8], [14.2, 7.8], [12.6, 8.4], [12.3, 9.4], [12.8, 10.4], [12.6, 11.4], [11.6, 12.2], [10.4, 13.5],
+          [9.0, 15.5], [7.6, 18.5], [6.4, 22.0], [5.6, 26.0], [5.2, 29.0], [5.4, 30.5], [6.2, 31.6], [8.8, 32.4],
+          [9.0, 33.4], [8.4, 34.2], [5.6, 35.0], [4.6, 36.4], [4.4, 39.0], [5.74, 41.19], [6.47, 42.33],
+          [6.99, 43.59], [7.26, 44.92], [7.28, 46.28], [7.04, 47.62], [6.57, 48.89], [5.86, 50.05], [4.95, 51.06],
+          [3.87, 51.89], [2.66, 52.5], [1.35, 52.87], [0.0, 53.0]]
+
+[qc]
+toleransi_tinggi_mm = 0.5
+toleransi_diameter_mm = 0.4
+toleransi_simetri_mm = 0.3
+maks_poligon = 150000
