@@ -39,7 +39,7 @@ Ask Claude things like:
 - "make a packshot of this bottle in red, blue and green, 16:9 and 9:16"
 
 Keep Blender open while Claude works. The model shows up in your viewport step by step as it is being built, and the
-last step is the exact mesh that gets saved.
+last step is the exact mesh that gets saved. See [docs/en/LIVE_PREVIEW.md](docs/en/LIVE_PREVIEW.md).
 
 ## What it can do
 
@@ -66,7 +66,8 @@ The open Blender only reads files from the workspace folder. Nothing listens on 
 ## Other MCP clients
 
 The connector is a standard MCP server, so Cursor, VS Code and other MCP clients can use it too. The one-click setup
-only writes the Claude Desktop config; for other clients copy the same command from your Claude config. It is
+only writes the Claude Desktop config; for other clients copy the same command from your Claude config
+([docs/en/CONNECTOR.md](docs/en/CONNECTOR.md)). It is
 tested with Claude. Results depend a lot on the model, since the hard part is writing a good shape spec.
 
 ## Usage stats
@@ -82,7 +83,8 @@ The numbers are reviewed every day. A change is only released when it passes the
 benchmark and doesn't make anything slower or worse; data that looks like spam from a single install is dropped.
 
 If you'd rather describe a problem in words, open an issue with the
-[feedback template](https://github.com/breakercreativelabs-collab/hangman/issues/new?template=kiriman-belajar.yml).
+[feedback template](https://github.com/breakercreativelabs-collab/hangman/issues/new?template=kiriman-belajar.yml). Details:
+[docs/en/FEEDBACK.md](docs/en/FEEDBACK.md).
 
 ## Known limitations
 

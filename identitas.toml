@@ -5,7 +5,7 @@
 nama = "Hangman"
 slug = "hangman"
 deskripsi = "Agen operator Blender: verbs, QC angka, aturan, dan preset untuk product shot, modeling dari referensi, TVC, dan prosedural."
-versi = "0.2.2"
+versi = "0.2.3"
 # Repo publik untuk kiriman belajar pengguna (GitHub Issue), format "pemilik/repo"; kosong = belum dipublikasikan.
 repo_publik = "breakercreativelabs-collab/hangman"
 # Endpoint telemetri otomatis (POST angka anonim, src/agen3d/telemetri.py); kosong = hanya antre lokal.

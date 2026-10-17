@@ -9,7 +9,7 @@ tagline = "Blender agent for Claude with numeric QC, non-generative"
 sertakan = [
   "README.md", "blender_cli.py", "konektor_mcp.py", "identitas.toml", "LICENSE", "rilis.toml",
   "src/", "addon/", "proyek/", "alat/rilis.py",
-  "docs/KONEKTOR.md", "docs/TONTON.md", "docs/BELAJAR.md", "docs/gambar/",
+  "docs/en/", "docs/gambar/",
   ".github/ISSUE_TEMPLATE/", ".github/workflows/rilis.yml",
 ]
 kecualikan = [

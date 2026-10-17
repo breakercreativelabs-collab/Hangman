@@ -4,7 +4,7 @@
   python3 alat/rilis.py [--out artefak/rilis] [--uji 1] [--platform linux-x64,windows-x64,...]
       --uji 1: hanya audit + uji negatif, tanpa menulis zip.
 Keluaran: <slug>-<versi>-<platform>.zip = SATU berkas ekstensi Blender per OS (add-on + kode + contoh proyek + paket
-Python konektor, Blender: Install from Disk -> Pasang & hubungkan ke Claude), dan <slug>-<versi>-sumber.zip.
+Python konektor, Blender: Install from Disk -> Pasang & hubungkan ke Claude), dan <slug>-<versi>-source.zip.
 
 Kode keluar 0 = paket bersih + semua uji negatif tertangkap. Nama/versi produk dari identitas.toml.
 """
@@ -168,7 +168,7 @@ def main():
     lulus = all(c["lulus"] for c in cek) and all(ok for _, ok, _ in neg)
     if lulus and o["uji"] != "1":
         os.makedirs(o["out"], exist_ok=True)
-        paket = os.path.join(o["out"], f"{akar_zip}-sumber.zip")
+        paket = os.path.join(o["out"], f"{akar_zip}-source.zip")
         with zipfile.ZipFile(paket, "w", zipfile.ZIP_DEFLATED) as z:
             for p, b in sorted(isi.items()):
                 z.writestr(f"{akar_zip}/{p}", b)
