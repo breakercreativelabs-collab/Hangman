@@ -379,7 +379,8 @@ def rakit(path_rancangan, out, render=True, sampel=32, mode="penuh", tonton=""):
     laporan = dict(rancangan=os.path.relpath(path_rancangan, io.path_repo()), titik=len(titik),
                    segitiga=len(sdf.segitiga(muka)), detik=round(time.time() - t0, 1), mode=mode, waktu=waktu,
                    lembar=os.path.relpath(lembar, io.path_repo()) if lembar else None, cek=cek,
-                   negatif=neg, aset=r.get("_laporan_aset"), **qc.ringkas(cek, neg))
+                   negatif=neg, aset=r.get("_laporan_aset"), **qc.ringkas(cek, neg),
+                   resep_dipakai=[b["resep"] for b in r["bagian"]] + [d["jenis"] for d in r.get("detail", [])])
     io.tulis_json(os.path.join(out, "laporan_qc.json"), laporan)
     log.info(f"selesai {laporan['detik']} s; lulus {laporan['lulus']}; negatif "
              f"{laporan['negatif_tertangkap']}/{laporan['negatif_jumlah']}")

@@ -1,4 +1,10 @@
-"""Perintah CLI modul belajar (kontrak cli: PERINTAH = {nama: (fungsi(argv) -> kode keluar, ringkasan)})."""
+"""Perintah CLI modul belajar (kontrak cli: def _uji_telemetri(argv):
+    from . import uji_telemetri
+    o = io.opsi(argv, dict(out=io.artefak("uji", "telemetri")))
+    return uji_telemetri.uji_semua(os.path.abspath(o["out"]))
+
+
+PERINTAH = {nama: (fungsi(argv) -> kode keluar, ringkasan)})."""
 import os
 
 from ...inti import io, log, qc
@@ -42,8 +48,15 @@ def _uji(argv):
     return 0 if lap["negatif_tertangkap"] == lap["negatif_jumlah"] else 1
 
 
+def _uji_telemetri(argv):
+    from . import uji_telemetri
+    o = io.opsi(argv, dict(out=io.artefak("uji", "telemetri")))
+    return uji_telemetri.uji_semua(os.path.abspath(o["out"]))
+
+
 PERINTAH = {
     "catat": (_catat, "catat cacat/selera pengguna LOKAL (teks + angka QC dari --laporan), bahan agen makin pintar"),
     "ekspor": (_ekspor, "kiriman anonim (path/email/klien/token dibuang, audit KB-01..06) untuk GitHub Issue; wajib --setuju 1"),
+    "uji_telemetri": (_uji_telemetri, "uji telemetri otomatis KM-01..07 (daftar putih, saklar mati, kirim, server mati) + negatif"),
     "uji": (_uji, "uji negatif audit privasi kiriman belajar (KB-01..06) + pembersihan"),
 }

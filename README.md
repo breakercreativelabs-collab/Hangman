@@ -1,4 +1,4 @@
-# Hangman 0.2.0
+# Hangman 0.2.1
 
 Agen operator **Blender** yang dipakai dari aplikasi Claude (Claude Desktop / Claude Code) lewat konektor MCP.
 Anda mengetik atau bicara di Claude; agen menjalankan perintah Blender yang sudah teruji, mengukur hasilnya dengan
@@ -21,7 +21,7 @@ preset.
 ## Pasang (satu berkas, ±1 menit)
 Butuh: **Blender 5.2 LTS** dan **Claude Desktop** (atau Claude Code). Tidak perlu Python, uv, atau mengedit JSON.
 1. Unduh satu berkas dari halaman [Releases](https://github.com/breakercreativelabs-collab/hangman/releases/latest) sesuai OS:
-   `hangman-0.2.0-windows-x64.zip` · `-macos-arm64.zip` · `-macos-x64.zip` · `-linux-x64.zip`.
+   `hangman-0.2.1-windows-x64.zip` · `-macos-arm64.zip` · `-macos-x64.zip` · `-linux-x64.zip`.
 2. Blender: **Edit > Preferences > Get Extensions > Install from Disk**, pilih zip itu (atau seret zip ke jendela Blender).
 3. 3D View > sidebar (**N**) > tab **Agen3D** > **Pasang & hubungkan ke Claude**.
    Isi paket disalin ke folder kerja (bawaan `Documents/Hangman`), dan konektor didaftarkan ke Claude Desktop
@@ -41,22 +41,12 @@ Langkah terakhir = mesh serah yang identik dengan hasil di folder kerja. Detail:
 Setiap kenaikan `versi` di `identitas.toml` yang masuk ke `main` membuat GitHub Release otomatis berisi zip ekstensi
 per OS (`.github/workflows/rilis.yml` -> `alat/rilis.py`: audit privasi + paket). Pasang konektor manual: `docs/KONEKTOR.md`.
 
-## Agen makin pintar dari banyak pengguna
-Setiap koreksi Anda bisa menjadi aturan QC permanen untuk semua pengguna:
-1. Saat melihat cacat atau punya selera: minta Claude "catat cacat: ..." (`belajar catat`). Tersimpan **lokal**.
-2. Bila bersedia berbagi: `belajar ekspor --setuju 1` membuat `kiriman.json` yang sudah dibersihkan (path, email,
-   nama pengguna, berkas klien, token) dan diaudit. Tidak ada yang dikirim otomatis.
-3. Buka Issue di https://github.com/breakercreativelabs-collab/hangman/issues/new?template=kiriman-belajar.yml dan lampirkan isinya.
-4. Pengelola mengubahnya menjadi aturan + cek angka + uji negatif; rilis berikutnya membawa keahlian itu ke semua orang.
-Detail: `docs/BELAJAR.md`.
+## Agen makin pintar dari pemakaian (telemetri otomatis, MENYALA bawaan)
+Setiap job mengirim **angka anonim** ke server proyek: versi, OS, nama perintah, durasi, hasil cek QC (ID + angka),
+jenis galat, dan tombol Suka/Kurang di panel. **Tidak pernah**: nama berkas/proyek, path, gambar, model, prompt, teks
+bebas, alamat IP (server tidak menyimpannya). Matikan kapan saja: panel Agen3D > **Matikan**, atau env
+`AGEN3D_TELEMETRI=0`. Setiap hari agen menganalisis data, mengusulkan perbaikan, dan hanya merilisnya bila semua uji
+dan tolok ukur membuktikan kemajuan; data dari satu pemasangan yang membanjiri ditolak.
 
-## Batas yang jujur
-- Bentuk organik (hewan, karakter) dari prompt belum setingkat ahli; jalurnya aset 3D terbuka berlisensi yang dinilai
-  juri kualitas (KA-01..08) lalu disesuaikan. Aset diunduh sendiri ke `klien/` (tidak disertakan).
-- Render final butuh GPU (OptiX/CUDA); CPU bisa, lambat.
-- Kode bebas (`jalankan_kode`) selalu meminta izin Anda di setiap panggilan.
-
-## Lisensi
-GPL-3.0-or-later (lihat `LICENSE`). Kode yang berjalan di dalam Blender (bpy) wajib GPL saat didistribusikan.
-Aset pihak ketiga yang dipakai contoh (mis. "A Beautiful Game", CC-BY 4.0) tidak disertakan; atribusinya ada di
-rancangan masing-masing.
+Koreksi tertulis tetap bisa dikirim manual: `belajar catat` -> `belajar ekspor --setuju 1` -> Issue
+https://github.com/breakercreativelabs-collab/hangman/issues/new?template=kiriman-belajar.yml. Detail: `docs/BELAJAR.md`.

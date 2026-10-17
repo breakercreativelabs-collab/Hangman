@@ -3,7 +3,9 @@
 - Mode tonton: Blender yang terbuka menampilkan model yang sedang dibangun agen, langkah demi langkah.
 Panel: 3D View > sidebar (N) > tab Agen3D. Lisensi: GPL-3.0-or-later.
 """
+import importlib
 import os
+import sys
 import tomllib
 
 import bpy
@@ -33,6 +35,16 @@ def folder_kerja():
     if not os.path.isdir(PAYLOAD):
         return REPO  # mode pengembang: repo = folder kerja
     return bpy.path.abspath(pref().folder_kerja) or koneksi.folder_kerja_bawaan(identitas()["nama"])
+
+
+def telemetri():
+    """Modul telemetri dari folder kerja (kode agen yang sama dengan konektor); None bila belum terpasang."""
+    src = os.path.join(folder_kerja(), "src")
+    if not os.path.isdir(os.path.join(src, "agen3d")):
+        return None
+    if src not in sys.path:
+        sys.path.insert(0, src)
+    return importlib.import_module("agen3d.telemetri")
 
 
 def terpasang():
@@ -91,6 +103,33 @@ class AGEN3D_OT_tonton(bpy.types.Operator):
         return {"FINISHED"}
 
 
+class AGEN3D_OT_vonis(bpy.types.Operator):
+    """Suka / tidak suka hasil terakhir: dikirim sebagai angka (+1/-1) agar agen belajar selera"""
+    bl_idname = "agen3d.vonis"
+    bl_label = "Vonis"
+    nilai: bpy.props.IntProperty(default=1)
+
+    def execute(self, context):
+        t = telemetri()
+        if t:
+            t.catat_vonis(1 if self.nilai > 0 else -1)
+        self.report({"INFO"}, "Terima kasih, tercatat" if t and t.aktif() else "Telemetri mati: vonis tidak dikirim")
+        return {"FINISHED"}
+
+
+class AGEN3D_OT_telemetri(bpy.types.Operator):
+    """Nyalakan/matikan kiriman angka anonim (tanpa berkas, teks, atau path)"""
+    bl_idname = "agen3d.telemetri"
+    bl_label = "Telemetri"
+    nyala: bpy.props.BoolProperty(default=False)
+
+    def execute(self, context):
+        t = telemetri()
+        if t:
+            t.atur(self.nyala)
+        return {"FINISHED"}
+
+
 class AGEN3D_OT_buka(bpy.types.Operator):
     bl_idname = "agen3d.buka_folder"
     bl_label = "Buka folder kerja"
@@ -114,10 +153,23 @@ class AGEN3D_PT_panel(bpy.types.Panel):
         col.label(text=tonton.status(), icon="HIDE_OFF" if tonton._keadaan["aktif"] else "HIDE_ON")
         col.operator("agen3d.tonton", text="Henti tonton" if tonton._keadaan["aktif"] else "Mulai tonton").nyala = \
             not tonton._keadaan["aktif"]
+        d = tonton.baca_manifest(tonton._keadaan["folder"]) if tonton._keadaan["folder"] else None
+        if d and d.get("selesai"):
+            r = col.row(align=True)
+            r.operator("agen3d.vonis", text="Suka", icon="SOLO_ON").nilai = 1
+            r.operator("agen3d.vonis", text="Kurang", icon="SOLO_OFF").nilai = -1
         col.operator("agen3d.buka_folder", icon="FILE_FOLDER")
+        t = telemetri() if terpasang() else None
+        if t:
+            col.separator()
+            nyala = t.aktif()
+            col.label(text="Bantu agen belajar: kirim angka anonim" if nyala else "Telemetri mati",
+                      icon="CHECKBOX_HLT" if nyala else "CHECKBOX_DEHLT")
+            col.operator("agen3d.telemetri", text="Matikan" if nyala else "Nyalakan").nyala = not nyala
 
 
-KELAS = (Preferensi, AGEN3D_OT_pasang, AGEN3D_OT_tonton, AGEN3D_OT_buka, AGEN3D_PT_panel)
+KELAS = (Preferensi, AGEN3D_OT_pasang, AGEN3D_OT_tonton, AGEN3D_OT_vonis, AGEN3D_OT_telemetri, AGEN3D_OT_buka,
+         AGEN3D_PT_panel)
 
 
 def _otomatis():

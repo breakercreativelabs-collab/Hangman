@@ -86,4 +86,13 @@ def main(argv=None):
         print(f"perintah '{a[1]}' tidak ada di {a[0]}; tersedia: {', '.join(daftar)}")
         return 2
     log.banner(a[0], a[1])
-    return int(daftar[a[1]][0](a[2:]) or 0)
+    import time
+    from . import telemetri
+    t0 = time.time()
+    try:
+        kode = int(daftar[a[1]][0](a[2:]) or 0)
+    except BaseException as e:  # galat tetap dilempar; telemetri hanya mencatat JENISNYA (tanpa pesan/path)
+        telemetri.catat_job(a[0], a[1], 1, t0, type(e).__name__.lower())
+        raise
+    telemetri.catat_job(a[0], a[1], kode, t0)
+    return kode
