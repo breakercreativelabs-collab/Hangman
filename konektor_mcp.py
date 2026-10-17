@@ -17,7 +17,9 @@ os.environ.setdefault("NoDefaultCurrentDirectoryInExePath", "1")  # Windows: jan
 os.chdir(AKAR)  # cwd = repo (klien bisa memulai server dari folder proyek lain)
 sys.path.insert(0, os.path.join(AKAR, "src"))
 if os.path.isdir(os.path.join(AKAR, "lib")):  # paket Python (mcp, ...) dibuka ekstensi Blender: Python bawaan Blender cukup
+    import site
     sys.path.insert(0, os.path.join(AKAR, "lib"))
+    site.addsitedir(os.path.join(AKAR, "lib"))  # jalankan .pth (pywin32 di Windows memuat DLL-nya lewat .pth)
 from agen3d import identitas  # noqa: E402
 
 

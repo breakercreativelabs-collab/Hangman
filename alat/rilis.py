@@ -110,15 +110,55 @@ PY = "3.13"
 SYARAT = "mcp>=2,<3"
 
 
+TARGET = {  # lingkungan penanda (PEP 508) tiap platform: pip download menilai penanda dengan OS yang MENJALANKAN pip
+    "windows-x64": dict(sys_platform="win32", platform_system="Windows", os_name="nt", platform_machine="AMD64"),
+    "linux-x64": dict(sys_platform="linux", platform_system="Linux", os_name="posix", platform_machine="x86_64"),
+    "macos-arm64": dict(sys_platform="darwin", platform_system="Darwin", os_name="posix", platform_machine="arm64"),
+    "macos-x64": dict(sys_platform="darwin", platform_system="Darwin", os_name="posix", platform_machine="x86_64"),
+}
+
+
+def _nama_paket(n):
+    return re.sub(r"[-_.]+", "-", n).lower()
+
+
+def kebutuhan_kurang(platform, whl):
+    """Requires-Dist (penanda dinilai untuk platform TARGET) yang belum ada di himpunan wheel. KR-08."""
+    from pip._vendor.packaging.requirements import Requirement
+    env = dict(TARGET[platform], python_version=PY, python_full_version=PY + ".0", implementation_name="cpython",
+               platform_python_implementation="CPython", extra="")
+    ada = {_nama_paket(os.path.basename(w).split("-")[0]) for w in whl}
+    kurang = set()
+    for w in whl:
+        with zipfile.ZipFile(w) as z:
+            meta = next(n for n in z.namelist() if n.endswith(".dist-info/METADATA"))
+            for baris in z.read(meta).decode("utf-8", "replace").splitlines():
+                if not baris.startswith("Requires-Dist:"):
+                    continue
+                r = Requirement(baris.split(":", 1)[1].strip())
+                if (r.marker is None or r.marker.evaluate(env)) and _nama_paket(r.name) not in ada:
+                    kurang.add(str(r).split(";")[0].strip())
+    return sorted(kurang)
+
+
 def wheels(platform, cache):
-    """Unduh wheel konektor untuk satu platform (cache per platform). Daftar path .whl."""
+    """Unduh wheel konektor untuk satu platform (cache per platform), lalu lengkapi dependensi yang penandanya
+    hanya berlaku di OS target (mis. pywin32 untuk mcp di Windows). Daftar path .whl."""
     d = os.path.join(cache, platform)
-    if not glob.glob(os.path.join(d, "mcp-*.whl")):
-        arg = [sys.executable, "-m", "pip", "download", SYARAT, "--only-binary=:all:", "--python-version", PY,
-               "--implementation", "cp", "-d", d, "-q"]
+
+    def unduh(syarat, tanpa_dep=False):
+        arg = [sys.executable, "-m", "pip", "download", *syarat, "--only-binary=:all:", "--python-version", PY,
+               "--implementation", "cp", "-d", d, "-q"] + (["--no-deps"] if tanpa_dep else [])
         for t in PLATFORM[platform]:
             arg += ["--platform", t]
         subprocess.run(arg, check=True)
+    if not glob.glob(os.path.join(d, "mcp-*.whl")):
+        unduh([SYARAT])
+    for _ in range(10):  # tutup himpunan dependensi menurut penanda OS target
+        kurang = kebutuhan_kurang(platform, glob.glob(os.path.join(d, "*.whl")))
+        if not kurang:
+            break
+        unduh(kurang)
     return sorted(glob.glob(os.path.join(d, "*.whl")))
 
 
@@ -175,7 +215,15 @@ def main():
         print(f"sumber: {paket} ({len(isi)} berkas, {os.path.getsize(paket) // 1024} KB)")
         for pf in [x for x in o["platform"].split(",") if x]:
             eks = os.path.join(o["out"], f"{akar_zip}-{pf}.zip")
-            tulis_ekstensi(eks, idn, pf, m, isi, wheels(pf, os.path.join(o["out"], "wheels")))
+            whl = wheels(pf, os.path.join(o["out"], "wheels"))
+            kurang = kebutuhan_kurang(pf, whl)
+            print(f"  KR-08 {'LULUS' if not kurang else 'GAGAL'} dependensi lengkap untuk {pf}: {kurang or 'lengkap'}")
+            if kurang:
+                return 1
+            if pf == "windows-x64" and not kebutuhan_kurang(pf, [w for w in whl if "pywin32" not in w]):
+                print("  negatif KR-08 BOCOR: tanpa pywin32 tetap dianggap lengkap")  # cacat 0.2.2-0.2.4 (uji Windows)
+                return 1
+            tulis_ekstensi(eks, idn, pf, m, isi, whl)
             print(f"ekstensi {pf}: {eks} ({os.path.getsize(eks) // 1024} KB)")
     print(f"rilis {'LULUS' if lulus else 'GAGAL'}: {sum(c['lulus'] for c in cek)}/{len(cek)} cek, negatif "
           f"{sum(ok for _, ok, _ in neg)}/{len(neg)}")
