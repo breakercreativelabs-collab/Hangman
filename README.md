@@ -1,52 +1,97 @@
-# Hangman 0.2.1
+# Hangman
 
-Agen operator **Blender** yang dipakai dari aplikasi Claude (Claude Desktop / Claude Code) lewat konektor MCP.
-Anda mengetik atau bicara di Claude; agen menjalankan perintah Blender yang sudah teruji, mengukur hasilnya dengan
-**QC angka**, dan membuktikan QC itu benar lewat **uji negatif**. Semua hasil adalah kerja 3D asli di Blender
-(geometri, material, cahaya, render) yang bisa diedit manusia: **non-generatif**, tanpa AI pembuat gambar/3D.
+A Blender agent you talk to from Claude. You describe what you want, it runs tested Blender operations, measures
+the result, and refuses to hand over anything that fails its checks.
 
-Komputasi (Blender, GPU) dan otak (langganan/API Claude) milik Anda sendiri. Paket ini berisi alat, QC, aturan, dan
-preset.
+It does not generate meshes or images with AI. Everything it makes is regular Blender geometry, materials and
+renders that you can open and edit.
 
-## Yang bisa dilakukan
-| Modul | Isi |
+![Chess set built from text prompts and checked by the agent](docs/gambar/set-catur-dekat.png)
+
+<sub>Every piece above was built from a text description (no reference photo), then measured: height, base
+diameter, symmetry, watertightness, and the height order of the whole set. The knight uses the CC-BY 4.0
+["A Beautiful Game"](https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/ABeautifulGame) asset
+(model (c) 2020 ASWF / MaterialX, glTF (c) 2022 Ed Mackey) as its base.</sub>
+
+## Install
+
+You need Blender 5.2 and Claude Desktop (or Claude Code).
+
+1. Download the zip for your system from the [latest release](https://github.com/breakercreativelabs-collab/hangman/releases/latest):
+   `windows-x64`, `macos-arm64`, `macos-x64` or `linux-x64`. Don't unzip it.
+2. In Blender: **Edit > Preferences > Get Extensions**, open the menu in the top right, choose
+   **Install from Disk** and pick the zip.
+3. In the 3D viewport press **N**, open the **Hangman** tab and click **Install & connect to Claude**.
+4. Quit Claude Desktop completely (tray icon > Quit) and start it again.
+
+That's it. No Python install, no `uv`, no editing JSON by hand. The connector runs on Blender's own Python. Your
+existing MCP servers in `claude_desktop_config.json` are kept, and a backup of the file is written first.
+
+Files go to `Documents/Hangman` by default (change it in the add-on preferences).
+
+## Try it
+
+Ask Claude things like:
+
+- "run diagnostics"
+- "build a chess pawn"
+- "build the full chess set on a board"
+- "make a packshot of this bottle in red, blue and green, 16:9 and 9:16"
+
+Keep Blender open while Claude works. The model shows up in your viewport step by step as it is being built, and the
+last step is the exact mesh that gets saved.
+
+## What it can do
+
+| Module | What it does |
 |---|---|
-| `product_shot` | packshot studio, turntable, varian warna & rasio (16:9, 9:16, 1:1) + 10 QC |
-| `perakit` | model 3D dari **prompt teks**: Claude menulis rancangan bentuk (TOML), perakit membangun SDF -> mesh -> QC. Contoh: set catur lengkap (`proyek/*_catur`, `perakit set`) |
-| `modeling_referensi` | model produk dari foto referensi lewat data angka (kontur -> mm -> mesh -> QC siluet) |
-| `tvc` | animatic/TVC produk berbasis konfigurasi |
-| `prosedural` | pohon prosedural + pencocokan siluet |
-| `belajar` | kiriman koreksi Anda (cacat/selera) yang membuat agen makin pintar (lihat di bawah) |
+| `perakit` | Builds objects from a text description: Claude writes a shape spec (TOML), the agent turns it into a mesh and runs size, symmetry and manifold checks |
+| `product_shot` | Studio packshots, turntables, color variants and aspect ratios |
+| `modeling_referensi` | Models a real product from reference photos via measured contours |
+| `tvc` | Short product animatics from a config file |
+| `prosedural` | Procedural trees |
 
-## Pasang (satu berkas, ±1 menit)
-Butuh: **Blender 5.2 LTS** dan **Claude Desktop** (atau Claude Code). Tidak perlu Python, uv, atau mengedit JSON.
-1. Unduh satu berkas dari halaman [Releases](https://github.com/breakercreativelabs-collab/hangman/releases/latest) sesuai OS:
-   `hangman-0.2.1-windows-x64.zip` · `-macos-arm64.zip` · `-macos-x64.zip` · `-linux-x64.zip`.
-2. Blender: **Edit > Preferences > Get Extensions > Install from Disk**, pilih zip itu (atau seret zip ke jendela Blender).
-3. 3D View > sidebar (**N**) > tab **Agen3D** > **Pasang & hubungkan ke Claude**.
-   Isi paket disalin ke folder kerja (bawaan `Documents/Hangman`), dan konektor didaftarkan ke Claude Desktop
-   (server MCP lain tidak disentuh, cadangan `.bak` dibuat). Perintah untuk Claude Code ikut tersalin ke clipboard.
-4. Tutup penuh Claude Desktop lalu buka lagi. Ketik: "jalankan diagnosa".
-5. Biarkan Blender terbuka: setiap model yang dibangun Claude **tampil langkah demi langkah** di viewport (mode tonton,
-   otomatis menyala).
+Each check comes with a negative test: a deliberately broken input that the check has to catch. A check that never
+fails on broken input is treated as broken.
 
-Konektor berjalan dengan Python bawaan Blender. Tanpa socket/port jaringan: Claude menjalankan Blender di latar,
-Blender yang terbuka hanya membaca hasilnya dari folder kerja.
+## How it works
 
-## Mode tonton (preview realtime di Blender yang terbuka)
-Coba: "bangun pion catur" atau "bangun set catur lengkap". Panel tab Agen3D menampilkan langkah ke berapa.
-Langkah terakhir = mesh serah yang identik dengan hasil di folder kerja. Detail: `docs/TONTON.md`.
+```
+You -> Claude -> MCP connector -> Blender (headless, in the background) -> files in your workspace
+                                                                         -> your open Blender shows the steps
+```
 
-## Rilis
-Setiap kenaikan `versi` di `identitas.toml` yang masuk ke `main` membuat GitHub Release otomatis berisi zip ekstensi
-per OS (`.github/workflows/rilis.yml` -> `alat/rilis.py`: audit privasi + paket). Pasang konektor manual: `docs/KONEKTOR.md`.
+The open Blender only reads files from the workspace folder. Nothing listens on a network port.
 
-## Agen makin pintar dari pemakaian (telemetri otomatis, MENYALA bawaan)
-Setiap job mengirim **angka anonim** ke server proyek: versi, OS, nama perintah, durasi, hasil cek QC (ID + angka),
-jenis galat, dan tombol Suka/Kurang di panel. **Tidak pernah**: nama berkas/proyek, path, gambar, model, prompt, teks
-bebas, alamat IP (server tidak menyimpannya). Matikan kapan saja: panel Agen3D > **Matikan**, atau env
-`AGEN3D_TELEMETRI=0`. Setiap hari agen menganalisis data, mengusulkan perbaikan, dan hanya merilisnya bila semua uji
-dan tolok ukur membuktikan kemajuan; data dari satu pemasangan yang membanjiri ditolak.
+## Other MCP clients
 
-Koreksi tertulis tetap bisa dikirim manual: `belajar catat` -> `belajar ekspor --setuju 1` -> Issue
-https://github.com/breakercreativelabs-collab/hangman/issues/new?template=kiriman-belajar.yml. Detail: `docs/BELAJAR.md`.
+The connector is a standard MCP server, so Cursor, VS Code and other MCP clients can use it too. The one-click setup
+only writes the Claude Desktop config; for other clients copy the same command from your Claude config. It is
+tested with Claude. Results depend a lot on the model, since the hard part is writing a good shape spec.
+
+## Usage stats
+
+To get better over time, the agent sends anonymous numbers after each job: version, OS, command name, duration,
+which checks passed or failed (check ID and value), the error type if it crashed, and the Good / Not good rating
+you click in the panel.
+
+It never sends file or project names, paths, prompts, images, meshes or any free text. The server doesn't store IP
+addresses. Turn it off any time with **Turn off** in the panel, or by setting `AGEN3D_TELEMETRY=0`.
+
+The numbers are reviewed every day. A change is only released when it passes the full test suite and a fixed
+benchmark and doesn't make anything slower or worse; data that looks like spam from a single install is dropped.
+
+If you'd rather describe a problem in words, open an issue with the
+[feedback template](https://github.com/breakercreativelabs-collab/hangman/issues/new?template=kiriman-belajar.yml).
+
+## Known limitations
+
+- Organic shapes (animals, characters) built from scratch don't look professional yet. For those it adapts openly
+  licensed models and checks their quality first.
+- Surface detail is lower than AI mesh generators. That's the trade-off for exact sizes and editable geometry.
+- Needs Blender 5.2 (the bundled Python packages are built for its Python 3.13).
+- Final renders want a GPU. CPU works, slowly.
+
+## License
+
+GPL-3.0-or-later. See [LICENSE](LICENSE).

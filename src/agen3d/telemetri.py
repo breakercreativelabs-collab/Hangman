@@ -29,7 +29,8 @@ KUNCI = {"job": {"v", "jenis", "id_pasang", "versi", "os", "blender", "modul", "
 
 
 def aktif():
-    return os.environ.get("AGEN3D_TELEMETRI", "1") != "0" and not os.path.exists(os.path.join(FOLDER, "MATI"))
+    mati = "0" in (os.environ.get("AGEN3D_TELEMETRI", "1"), os.environ.get("AGEN3D_TELEMETRY", "1"))  # ejaan ID/EN
+    return not mati and not os.path.exists(os.path.join(FOLDER, "MATI"))
 
 
 def atur(nyala):

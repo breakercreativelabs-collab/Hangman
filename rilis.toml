@@ -3,13 +3,13 @@
 [rilis]
 lisensi = "GPL-3.0-or-later"
 blender_min = "5.2.0"   # paket Python konektor dibangun untuk Python 3.13 (Blender 5.2 LTS)
-tagline = "Agen Blender untuk Claude: QC angka, non-generatif"
+tagline = "Blender agent for Claude with numeric QC, non-generative"
 # Keputusan pengguna 2026-10-17: repo publik = AGEN SAJA (berkas untuk bekerja). Uji kita, skill/dokumen Claude,
 # dokumen arsitektur internal, dan hasil proyek tidak ikut.
 sertakan = [
   "README.md", "blender_cli.py", "konektor_mcp.py", "identitas.toml", "LICENSE", "rilis.toml",
   "src/", "addon/", "proyek/", "alat/rilis.py",
-  "docs/KONEKTOR.md", "docs/TONTON.md", "docs/BELAJAR.md",
+  "docs/KONEKTOR.md", "docs/TONTON.md", "docs/BELAJAR.md", "docs/gambar/",
   ".github/ISSUE_TEMPLATE/", ".github/workflows/rilis.yml",
 ]
 kecualikan = [

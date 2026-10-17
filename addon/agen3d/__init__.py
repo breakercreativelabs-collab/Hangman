@@ -1,7 +1,7 @@
 """Ekstensi Blender: satu berkas untuk semuanya.
 - Pasang & hubungkan: isi paket -> folder kerja, konektor MCP didaftarkan ke Claude Desktop (Python bawaan Blender).
 - Mode tonton: Blender yang terbuka menampilkan model yang sedang dibangun agen, langkah demi langkah.
-Panel: 3D View > sidebar (N) > tab Agen3D. Lisensi: GPL-3.0-or-later.
+Panel: 3D View > sidebar (N) > tab bernama produk. Lisensi: GPL-3.0-or-later.
 """
 import importlib
 import os
@@ -53,27 +53,27 @@ def terpasang():
 
 class Preferensi(bpy.types.AddonPreferences):
     bl_idname = __package__
-    folder_kerja: bpy.props.StringProperty(name="Folder kerja", subtype="DIR_PATH", default="",
-                                           description="Proyek, hasil render, dan referensi klien. Kosong = Documents/<nama>")
-    tonton_otomatis: bpy.props.BoolProperty(name="Tonton otomatis saat Blender dibuka", default=True)
+    folder_kerja: bpy.props.StringProperty(name="Workspace folder", subtype="DIR_PATH", default="",
+                                           description="Projects, renders and reference files. Empty = Documents/<name>")
+    tonton_otomatis: bpy.props.BoolProperty(name="Start live preview when Blender opens", default=True)
 
     def draw(self, context):
         self.layout.prop(self, "folder_kerja")
         self.layout.prop(self, "tonton_otomatis")
-        self.layout.label(text=f"Folder kerja aktif: {folder_kerja()}")
+        self.layout.label(text=f"Active workspace: {folder_kerja()}")
 
 
 class AGEN3D_OT_pasang(bpy.types.Operator):
-    """Salin paket ke folder kerja dan daftarkan konektor ke Claude Desktop"""
+    """Copy the package to the workspace and register the connector with Claude Desktop"""
     bl_idname = "agen3d.pasang"
-    bl_label = "Pasang & hubungkan ke Claude"
+    bl_label = "Install & connect to Claude"
     config: bpy.props.StringProperty(default="", options={"SKIP_SAVE"})  # uji: path config pengganti
 
     def execute(self, context):
         idn, kerja = identitas(), folder_kerja()
         if os.path.isdir(PAYLOAD):
             r = koneksi.pasang(PAYLOAD, kerja, WHEELS)
-            self.report({"INFO"}, f"Terpasang di {kerja} ({r['wheel']} paket Python, {r['proyek_baru']} berkas proyek baru)")
+            self.report({"INFO"}, f"Installed to {kerja} ({r['wheel']} Python packages, {r['proyek_baru']} new project files)")
         entri = koneksi.entri_mcp(kerja, bpy.app.binary_path)
         calon = [self.config] if self.config else koneksi.jalur_config_claude()
         ada = [c for c in calon if os.path.isdir(os.path.dirname(c))] or calon[:1]
@@ -81,18 +81,18 @@ class AGEN3D_OT_pasang(bpy.types.Operator):
             for c in ada:
                 koneksi.tulis_config(c, idn["slug"], entri)
         except ValueError as e:  # config Claude rusak: jangan ditimpa
-            self.report({"ERROR"}, f"claude_desktop_config.json tidak valid, tidak diubah: {e}")
+            self.report({"ERROR"}, f"claude_desktop_config.json is not valid JSON, left unchanged: {e}")
             return {"CANCELLED"}
         context.window_manager.clipboard = koneksi.perintah_claude_code(idn["slug"], entri)
-        self.report({"INFO"}, f"Terhubung ({', '.join(ada)}). Tutup penuh Claude Desktop lalu buka lagi. "
-                              "Perintah Claude Code sudah disalin ke clipboard.")
+        self.report({"INFO"}, f"Connected ({', '.join(ada)}). Quit Claude Desktop completely and reopen it. "
+                              "The Claude Code command was copied to the clipboard.")
         tonton.mulai(os.path.join(kerja, "artefak", "tonton"))
         return {"FINISHED"}
 
 
 class AGEN3D_OT_tonton(bpy.types.Operator):
     bl_idname = "agen3d.tonton"
-    bl_label = "Tonton"
+    bl_label = "Live preview"
     nyala: bpy.props.BoolProperty(default=True)
 
     def execute(self, context):
@@ -104,23 +104,23 @@ class AGEN3D_OT_tonton(bpy.types.Operator):
 
 
 class AGEN3D_OT_vonis(bpy.types.Operator):
-    """Suka / tidak suka hasil terakhir: dikirim sebagai angka (+1/-1) agar agen belajar selera"""
+    """Rate the last result (+1/-1). Sent as a number so the agent learns what people like"""
     bl_idname = "agen3d.vonis"
-    bl_label = "Vonis"
+    bl_label = "Rate"
     nilai: bpy.props.IntProperty(default=1)
 
     def execute(self, context):
         t = telemetri()
         if t:
             t.catat_vonis(1 if self.nilai > 0 else -1)
-        self.report({"INFO"}, "Terima kasih, tercatat" if t and t.aktif() else "Telemetri mati: vonis tidak dikirim")
+        self.report({"INFO"}, "Thanks, recorded" if t and t.aktif() else "Telemetry is off: rating not sent")
         return {"FINISHED"}
 
 
 class AGEN3D_OT_telemetri(bpy.types.Operator):
-    """Nyalakan/matikan kiriman angka anonim (tanpa berkas, teks, atau path)"""
+    """Turn anonymous usage stats on or off (numbers only: no files, text or paths)"""
     bl_idname = "agen3d.telemetri"
-    bl_label = "Telemetri"
+    bl_label = "Telemetry"
     nyala: bpy.props.BoolProperty(default=False)
 
     def execute(self, context):
@@ -132,7 +132,7 @@ class AGEN3D_OT_telemetri(bpy.types.Operator):
 
 class AGEN3D_OT_buka(bpy.types.Operator):
     bl_idname = "agen3d.buka_folder"
-    bl_label = "Buka folder kerja"
+    bl_label = "Open workspace folder"
 
     def execute(self, context):
         bpy.ops.wm.path_open(filepath=folder_kerja())
@@ -141,31 +141,31 @@ class AGEN3D_OT_buka(bpy.types.Operator):
 
 class AGEN3D_PT_panel(bpy.types.Panel):
     bl_space_type, bl_region_type, bl_category = "VIEW_3D", "UI", "Agen3D"
-    bl_label = "Agen"
+    bl_label = "Agent"
 
     def draw(self, context):
         idn, col = identitas(), self.layout.column()
         col.label(text=f"{idn['nama']} {idn['versi']}")
         if terpasang():
-            col.label(text="Terhubung ke Claude", icon="CHECKMARK")
-        col.operator("agen3d.pasang", text="Pasang & hubungkan ke Claude" if not terpasang() else "Hubungkan ulang / perbarui")
+            col.label(text="Connected to Claude", icon="CHECKMARK")
+        col.operator("agen3d.pasang", text="Install & connect to Claude" if not terpasang() else "Reconnect / update")
         col.separator()
         col.label(text=tonton.status(), icon="HIDE_OFF" if tonton._keadaan["aktif"] else "HIDE_ON")
-        col.operator("agen3d.tonton", text="Henti tonton" if tonton._keadaan["aktif"] else "Mulai tonton").nyala = \
+        col.operator("agen3d.tonton", text="Stop live preview" if tonton._keadaan["aktif"] else "Start live preview").nyala = \
             not tonton._keadaan["aktif"]
         d = tonton.baca_manifest(tonton._keadaan["folder"]) if tonton._keadaan["folder"] else None
         if d and d.get("selesai"):
             r = col.row(align=True)
-            r.operator("agen3d.vonis", text="Suka", icon="SOLO_ON").nilai = 1
-            r.operator("agen3d.vonis", text="Kurang", icon="SOLO_OFF").nilai = -1
+            r.operator("agen3d.vonis", text="Good", icon="SOLO_ON").nilai = 1
+            r.operator("agen3d.vonis", text="Not good", icon="SOLO_OFF").nilai = -1
         col.operator("agen3d.buka_folder", icon="FILE_FOLDER")
         t = telemetri() if terpasang() else None
         if t:
             col.separator()
             nyala = t.aktif()
-            col.label(text="Bantu agen belajar: kirim angka anonim" if nyala else "Telemetri mati",
+            col.label(text="Anonymous usage stats: on" if nyala else "Anonymous usage stats: off",
                       icon="CHECKBOX_HLT" if nyala else "CHECKBOX_DEHLT")
-            col.operator("agen3d.telemetri", text="Matikan" if nyala else "Nyalakan").nyala = not nyala
+            col.operator("agen3d.telemetri", text="Turn off" if nyala else "Turn on").nyala = not nyala
 
 
 KELAS = (Preferensi, AGEN3D_OT_pasang, AGEN3D_OT_tonton, AGEN3D_OT_vonis, AGEN3D_OT_telemetri, AGEN3D_OT_buka,
@@ -182,6 +182,7 @@ def _otomatis():
 
 
 def register():
+    AGEN3D_PT_panel.bl_category = identitas()["nama"]  # tab sidebar = nama produk (dibaca dari identitas.toml)
     for k in KELAS:
         bpy.utils.register_class(k)
     bpy.app.timers.register(_otomatis, first_interval=1.0)

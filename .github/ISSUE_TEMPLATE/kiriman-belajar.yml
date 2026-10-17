@@ -1,41 +1,40 @@
-name: Kiriman belajar (cacat / selera)
-description: Bantu agen makin pintar. Lampirkan kiriman.json dari perintah `belajar ekspor --setuju 1`.
-title: "[belajar] "
-labels: ["kiriman-belajar"]
+name: Feedback (bug or preference)
+description: Something looked wrong, or you prefer a different result. Optionally attach the anonymised export.
+title: "[feedback] "
+labels: ["feedback"]
 body:
   - type: markdown
     attributes:
       value: |
-        Kiriman ini sudah dibersihkan otomatis (path, email, nama pengguna, berkas klien, token) dan lolos audit KB-01..06.
-        Periksa isinya sekali lagi sebelum mengirim. JANGAN lampirkan gambar/berkas klien.
+        Please don't attach client files or images you can't share publicly.
+        Optional: run `belajar ekspor --setuju 1` (or ask Claude to "export my feedback") and paste the resulting
+        `kiriman.json`. It is stripped of paths, emails, usernames, client file names and tokens before it is written.
   - type: dropdown
     id: jenis
     attributes:
-      label: Jenis
-      options: [cacat, selera, keduanya]
+      label: Type
+      options: [bug / wrong result, preference, both]
     validations: {required: true}
   - type: input
     id: modul
     attributes:
-      label: Modul
+      label: Module
       placeholder: perakit / product_shot / modeling_referensi / tvc / prosedural
   - type: textarea
     id: ringkasan
     attributes:
-      label: Ringkasan (1-3 kalimat)
-      description: Apa yang salah / apa yang Anda sukai, dilihat dari mata Anda.
+      label: What happened
+      description: What you asked for, what you got, and what you expected. A few sentences is plenty.
     validations: {required: true}
   - type: textarea
     id: kiriman
     attributes:
-      label: Isi kiriman.json
-      description: Tempel isi berkas atau seret berkasnya ke sini.
+      label: kiriman.json (optional)
       render: json
-    validations: {required: true}
   - type: checkboxes
     id: izin
     attributes:
-      label: Izin
+      label: Permission
       options:
-        - label: Saya setuju kiriman ini dipakai untuk membuat aturan QC/preset baru di proyek open source ini (GPL-3.0-or-later).
+        - label: This feedback may be used to add new checks or presets to the project (GPL-3.0-or-later).
           required: true

@@ -156,9 +156,9 @@ def henti():
 def status():
     """Teks status untuk panel."""
     if not _keadaan["aktif"]:
-        return "tonton mati"
+        return "live preview off"
     if not _keadaan["folder"]:
-        return "menunggu model dari Claude..."
+        return "waiting for a model from Claude..."
     d = baca_manifest(_keadaan["folder"]) or {}
     n = len(d.get("langkah", []))
-    return f"{d.get('nama', '?')}: langkah {_keadaan['tampil'] + 1}/{n}" + (" (selesai)" if d.get("selesai") else "")
+    return f"{d.get('nama', '?')}: step {_keadaan['tampil'] + 1}/{n}" + (" (done)" if d.get("selesai") else "")
