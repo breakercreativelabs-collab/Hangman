@@ -4,6 +4,7 @@
 license_name = "GPL-3.0-or-later"
 blender_min = "5.2.0"   # connector Python packages are built for Python 3.13 (Blender 5.2 LTS)
 tagline = "Blender agent for Claude with numeric QC, non-generative"
+telemetry_worker = "agen3d-telemetri"   # deployed Cloudflare Worker name (KR-09); renaming it breaks every install
 # User decision 2026-10-17: the public repo = THE AGENT ONLY (files needed to work). Our tests, Claude skills/docs,
 # internal architecture docs and project results are left out.
 include = [

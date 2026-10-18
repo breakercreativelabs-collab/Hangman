@@ -71,13 +71,16 @@ def audit(contents, m):
     check.append(dict(id="KR-07", name="README.md + add-on + entry point present",
                     value=sorted(x for x in ("README.md", "blender_cli.py", "addon/agent3d/__init__.py") if x in contents),
                     passed=all(x in contents for x in ("README.md", "blender_cli.py", "addon/agent3d/__init__.py"))))
-    # the worker name is a deployed host: a rename of identity.toml must never move telemetry to a host that does not exist
+    # the Worker name is a deployed host: a rename must never point telemetry at a host that does not exist.
+    # Expected name lives in release.toml (shipped publicly); the private repo also cross-checks wrangler.toml.
     url = tomllib.loads(contents.get("identity.toml", b"").decode("utf-8")).get("telemetry_url", "")
-    wrangler = os.path.join(ROOT, "services", "telemetry", "wrangler.toml")  # absent in the public repo: nothing to compare
-    worker = tomllib.load(open(wrangler, "rb"))["name"] if os.path.isfile(wrangler) else None
+    expected = m.get("telemetry_worker", "")
+    wrangler = os.path.join(ROOT, "services", "telemetry", "wrangler.toml")
+    deployed = tomllib.load(open(wrangler, "rb"))["name"] if os.path.isfile(wrangler) else expected
     host = urllib.parse.urlparse(url).hostname or ""
-    check.append(dict(id="KR-09", name="telemetry_url points at the deployed Worker (services/telemetry/wrangler.toml)",
-                      value=host, passed=not url or worker is None or host.split(".")[0] == worker))
+    check.append(dict(id="KR-09", name="telemetry_url points at the deployed Worker (release.toml telemetry_worker)",
+                      value=dict(host=host, expected=expected, deployed=deployed),
+                      passed=not url or (bool(expected) and host.split(".")[0] == expected == deployed)))
     return check
 
 
