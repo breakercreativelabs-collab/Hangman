@@ -1,0 +1,31 @@
+# Automatic release (public repo): version in identity.toml changes on main (or manual run) -> privacy audit +
+# Blender extension per OS -> GitHub Release "v<version>" (the action creates the tag; no need to push one).
+name: release
+on:
+  push:
+    branches: [main]
+    paths: [identity.toml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Version
+        id: version
+        run: echo "v=$(python -c "import tomllib;print(tomllib.load(open('identity.toml','rb'))['version'])")" >> "$GITHUB_OUTPUT"
+      - name: Audit + package (source + extension windows/macos/linux)
+        run: python tools/release.py
+      - name: Release v${{ steps.version.outputs.v }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.v }}
+          name: v${{ steps.version.outputs.v }}
+          target_commitish: ${{ github.sha }}
+          files: |
+            output/release/*.zip

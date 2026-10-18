@@ -1,0 +1,92 @@
+# Shape design: chess KNIGHT via the ASSET PATH (user decision 2026-10-17: for organic shapes it is fine to "find a
+# licensed asset and adapt it"). Head-neck-body = an openly licensed asset (graded by the KA judge first), cut above its
+# base, mounted on our set base (same as knight v2) -> one new closed mesh via SDF that passes KC QC.
+# The beauty of the head shape is the asset artist's work (see attribution), not built by the agent. Non-generative.
+# rev 1: subdiv 2 (faceted asset). rev 2 (user's eye: "body & base are separate", "it has no eyes"): body extended
+# to the collar + merge 2.5; eyes, nostrils, mouth relative to the surface; KA-08 required feature completeness.
+
+[entity]
+name = "knight catur (asset)"
+height_mm = 61.0        # [F] knight in a set with a 3.75" king = 61 mm (chessbazaar), base Ø35
+base_diameter_mm = 35.0
+voxel_mm = 0.2
+smooth_union_mm = 2.5     # rev 2: 1.0 -> 2.5 (body-collar joint curves instead of a broken line)
+target_triangles = 140000
+limit_mm = [[-21.0, -19.0, -1.0], [22.0, 19.0, 63.0]]
+preview = [[0, 4], [35, 18], [90, 4], [30, 10, 1.8, 0.80], [0, 4, 1.8, 0.80]]   # rev 2: + 2 face close-ups
+source = ["https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/ABeautifulGame"]
+
+# Set base (same as knight v2 rev 1).
+[[part]]
+name = "base_width"
+recipe = "lathe"
+smoothed_profile = 0.25
+sharp_profile = [1, 2, 3, 21]
+profile = [[0.0, 0.0], [17.0, 0.0], [17.5, 0.7], [17.5, 2.4], [16.3, 3.2], [14.6, 4.0], [14.4, 4.8], [15.4, 5.8],
+          [17.2, 7.0], [17.5, 8.5], [17.4, 9.8], [16.6, 11.0], [14.4, 12.0], [12.4, 13.0], [11.4, 14.0], [11.6, 15.0],
+          [13.8, 15.8], [14.9, 16.6], [14.6, 17.6], [12.8, 18.2], [11.0, 18.6], [0.0, 18.6]]
+
+# Asset: the "A Beautiful Game" knight (asset stored in references/, not in the repo). Scaled as a whole to 61 mm, muzzle to +X,
+# cut at z < 16.5 (the asset's base is dropped, the body merges into our base collar).
+[[part]]
+name = "head and body (asset)"
+recipe = "asset"
+model = "references/reference-chess_knight_v1/abeautifulgame/ABeautifulGame.glb"
+download = "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Assets/main/Models/ABeautifulGame/glTF-Binary/ABeautifulGame.glb"  # 43 MB, once
+entity = "Knight_W1"
+license_name = "CC-BY 4.0"
+attribution = "A Beautiful Game: (c) 2020 ASWF (MaterialX Project, original model); (c) 2022 Ed Mackey (glTF conversion); KhronosGroup/glTF-Sample-Assets"
+rotate_z = 90.0
+height_mm = 61.0
+cut_z = 16.5
+cut_smoothness = 0.4
+object_kind = "knight"    # rev 2: KA-08 required feature completeness (eye, ear, nostril, mouth, mane)
+asset_features = ["ear", "mane"]   # checked by Claude in a close-up: ears clear; mane = a soft ridge (weak)
+extend_from_z = 22.0  # rev 2: the asset's rounded body bottom ("a marble on a plate") -> the z 22 cross section is extended to the collar
+subdiv = 2              # rev 1: an 11k-triangle asset looked faceted -> Catmull-Clark 2 levels (after vertex welding)
+
+# ---- rev 2: face. The asset has no eyes (defect from the user's eye 2026-10-17) and its nostrils are barely there ->
+# added ON TOP of the asset, relative to the surface (the builder finds Y itself). Positions from the head silhouette
+# sizes of the rev 1 result: poll x~3 z~61, muzzle x~19 z~46, lower jaw z~42-44; eye [A] ~1/3 from forehead to muzzle,
+# on the top line of the middle of the head.
+[[detail]]
+name = "eye socket"
+kind = "subtract_sphere"
+center = [7.5, 0.0, 53.5]
+r = 1.6
+depth = 0.9
+smoothness = 0.35
+mirror = true
+
+[[detail]]
+name = "eyeball"
+kind = "add_sphere"
+center = [7.5, 0.0, 53.5]
+r = 1.15
+bump = 0.45
+smoothness = 0.15
+mirror = true
+
+[[detail]]
+name = "nostril"
+kind = "subtract_sphere"
+center = [17.0, 0.0, 46.6]
+r = 1.0
+depth = 0.8
+smoothness = 0.25
+mirror = true
+
+[[detail]]
+name = "mouth line"
+kind = "subtract_line"
+points = [[17.8, 0.0, 44.6], [16.4, 0.0, 44.0], [14.8, 0.0, 44.2]]   # from the muzzle tip to the mouth corner
+r = 0.5
+depth = 0.7
+smoothness = 0.2
+mirror = true
+
+[qc]
+height_tolerance_mm = 0.5
+diameter_tolerance_mm = 0.4
+symmetry_tolerance_mm = 0.3
+max_polygons = 200000

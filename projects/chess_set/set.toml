@@ -1,0 +1,33 @@
+# Complete chess set on a board (2026-10-17): the 6 piece kinds from prompts (builder) placed in the starting position, to
+# judge SET HARMONY (height, base, style) - not piece by piece. Two-color clay; textures deferred (user decision).
+# Units mm. Board: a1 at the bottom left seen from the white side (-Y), tile a1 dark.
+
+[set]
+name = "CHESS SET (BUILDER)"
+box_mm = 57.0          # [F] FIDE: tile 50-60 mm; king base 45 mm / 57 = 0.79 (guideline: king base 75-78% of the tile)
+board_thickness_mm = 14.0
+frame_mm = 22.0
+white = "#CFC6B6"        # ivory clay (color distinction, not texture)
+black = "#1C1612"        # ebony clay
+bright_tile = "#B9A586"
+dark_tile = "#4A3A2C"
+framing = "#2E241C"
+exposure = -1.7         # -1.0: white pieces too bright (carving lost)
+# [az, el, distance mm, target z, target x, target y]  az 0 = from the white side
+viewpoints = [[20, 32, 900, 20, 0, 0], [-140, 26, 900, 20, 0, 0], [12, 9, 420, 45, 0, -171], [-30, 14, 330, 45, -100, -171]]
+source = [
+  "https://www.chess.com/article/view/chess-board-dimensions",
+  "https://uschess.discourse.group/t/chess-set-board-size-standards/20746",
+]
+
+[piece]
+king = "projects/chess_king/design.toml"
+queen = "projects/chess_queen/design.toml"
+bishop = "projects/chess_bishop/design.toml"
+knight = "projects/chess_knight/design.toml"   # asset path (CC-BY 4.0, attribution in its design)
+rook = "projects/chess_rook/design.toml"
+pawn = "projects/chess_pawn/design.toml"
+
+# If the knight asset cannot be downloaded/found (e.g. offline): the prompt-built knight (v2) is used if its project exists, noted in the log.
+[backup_pieces]
+knight = "projects/chess_knight_v2/design.toml"

@@ -1,0 +1,25 @@
+# Public release manifest (open source, user decision 2026-10-17). Read by tools/release.py.
+# Only git-TRACKED files that match `include` and don't match `exclude` go into the package; then audited by KR-01..07.
+[release]
+license_name = "GPL-3.0-or-later"
+blender_min = "5.2.0"   # connector Python packages are built for Python 3.13 (Blender 5.2 LTS)
+tagline = "Blender agent for Claude with numeric QC, non-generative"
+# User decision 2026-10-17: the public repo = THE AGENT ONLY (files needed to work). Our tests, Claude skills/docs,
+# internal architecture docs and project results are left out.
+include = [
+  "README.md", "blender_cli.py", "mcp_connector.py", "identity.toml", "LICENSE", "release.toml",
+  "src/", "addon/", "projects/", "tools/release.py",
+  "docs/", "docs/images/",
+  ".github/ISSUE_TEMPLATE/", ".github/workflows/release.yml",
+]
+exclude = [
+  "projects/am1/", "projects/am90/",   # branded practice projects (spec work, not affiliated): not distributed
+  "projects/*/result/",
+  "projects/chess_knight_v1/", "projects/chess_knight_v2/",  # old knights (rated as failed by the user); the public knight = chess_knight                # our test/example output (regenerated when used)
+  "docs/README_PUBLIC.md",          # becomes the package README.md (product name filled in from identity.toml)
+]
+# Must never appear in the package (private idea space, client files, binaries, local settings).
+forbidden = ["00-inbox/", "01-ide/", "02-arsip/", "sesi/", "experiment/", "references/", "output/", "CLAUDE.md",
+             "INDEX.md", ".claude/worktrees/", ".claude/settings.local.json", ".env"]
+# Third-party brands that must not appear in the package (checked in lowercase).
+brand = ["nike", "water max", "adidas"]

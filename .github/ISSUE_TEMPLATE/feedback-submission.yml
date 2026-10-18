@@ -1,0 +1,40 @@
+name: Feedback (bug or preference)
+description: Something looked wrong, or you prefer a different result. Optionally attach the anonymised export.
+title: "[feedback] "
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please don't attach client files or images you can't share publicly.
+        Optional: run `feedback export --approve 1` (or ask Claude to "export my feedback") and paste the resulting
+        `submission.json`. It is stripped of paths, emails, usernames, client file names and tokens before it is written.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Type
+      options: [bug / wrong result, preference, both]
+    validations: {required: true}
+  - type: input
+    id: module
+    attributes:
+      label: Module
+      placeholder: builder / product_shot / reference_modeling / tvc / procedural
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened
+      description: What you asked for, what you got, and what you expected. A few sentences is plenty.
+    validations: {required: true}
+  - type: textarea
+    id: submission
+    attributes:
+      label: submission.json (optional)
+      render: json
+  - type: checkboxes
+    id: permission
+    attributes:
+      label: Permission
+      options:
+        - label: This feedback may be used to add new checks or presets to the project (GPL-3.0-or-later).
+          required: true

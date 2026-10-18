@@ -1,0 +1,12 @@
+# Product identity: the ONLY file that contains the product name.
+# Renaming the product = editing this file only. Code, packages and modules use a neutral name (agent3d);
+# CLI/log text reads the values here via src/agent3d/identity.py. Structure test (a) fails if the name/slug
+# below appears in any other file (see docs/ARCHITECTURE.md).
+name = "Hangman"
+slug = "hangman"
+description = "Blender operator agent: tested verbs, numeric QC, rules and presets for product shots, reference modeling, TVC and procedural work."
+version = "0.3.0"
+# Public repo that receives users' learning submissions (GitHub Issues), format "owner/repo"; empty = not published yet.
+public_repo = "breakercreativelabs-collab/hangman"
+# Automatic telemetry endpoint (POSTs anonymous numbers, src/agent3d/telemetry.py); empty = local queue only.
+telemetry_url = "https://agen3d-telemetri.breakercreativelabs.workers.dev/"

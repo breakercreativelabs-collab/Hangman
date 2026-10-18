@@ -1,0 +1,49 @@
+# Shape design: Staunton-style chess ROOK (2nd rung of the ladder after the pawn; /modeling-prompt skill).
+# Units mm; Z = height. [F] sourced fact, [A] common Staunton anatomy, [D] design decision.
+# Shape type = turned + notched top -> `lathe` recipe (with a hollow top) + 2 crossing `subtract_box`.
+
+[entity]
+name = "rook catur"
+height_mm = 56.0        # [F] rook 2.20" = 56 mm in a set with a 3.75" king (chessbazaar; pawn of the same set 53 mm)
+base_diameter_mm = 38.0 # [F] rook base 1.49" = 38 mm (chessbazaar, same set)
+voxel_mm = 0.2
+smooth_union_mm = 0.0
+target_triangles = 90000
+limit_mm = [[-21.0, -21.0, -1.0], [21.0, 21.0, 58.0]]
+source = [
+  "https://chessbazaar.com/products/the-professional-staunton-series-chess-pieces-in-black-dyed-natural-white-solid-plastic-3-75-king",
+]
+
+# Profile (r, z) [A]: stepped base (pawn style, scaled to r 19), cylindrical tower narrowing slightly toward the top, collar
+# ring, flared crown (r 13.8) with upright walls, hollow top (floor z 52.5, inner wall r 10.4).
+[[part]]
+name = "turned body"
+recipe = "lathe"
+smoothed_profile = 0.25
+sharp_profile = [1, 2, 3, 28, 29, 30, 31, 32]   # base corners + crown/hollow edges stay crisp
+profile = [[0.0, 0.0], [18.4, 0.0], [19.0, 0.7], [19.0, 3.0], [18.2, 3.8], [16.8, 4.3], [17.0, 5.2], [17.8, 6.2],
+          [17.8, 7.4], [16.6, 8.4], [14.6, 9.2], [14.2, 10.4], [14.8, 11.4], [14.6, 12.4], [13.4, 13.2],
+          [12.4, 14.2], [11.6, 17.0], [11.0, 22.0], [10.6, 28.0], [10.4, 34.0], [10.5, 38.0], [11.6, 39.0],
+          [12.0, 40.0], [11.4, 40.8], [10.8, 41.6], [11.2, 43.5], [12.6, 46.5], [13.6, 49.0], [13.8, 51.0],
+          [13.8, 56.0], [10.4, 56.0], [10.4, 52.5], [0.0, 52.5]]
+
+# Crown notches [D]: 2 crossing slots 3.4 mm wide, 4 mm deep (floor z 52) -> 4 small battlements (merlons).
+[[detail]]
+name = "crown slot X"
+kind = "subtract_box"
+center = [0.0, 0.0, 55.0]
+half_size = [16.0, 1.7, 3.0]
+r = 0.3
+
+[[detail]]
+name = "crown slot Y"
+kind = "subtract_box"
+center = [0.0, 0.0, 55.0]
+half_size = [1.7, 16.0, 3.0]
+r = 0.3
+
+[qc]
+height_tolerance_mm = 0.5
+diameter_tolerance_mm = 0.4
+symmetry_tolerance_mm = 0.3
+max_polygons = 150000

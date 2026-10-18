@@ -6,7 +6,7 @@ the result, and refuses to hand over anything that fails its checks.
 It does not generate meshes or images with AI. Everything it makes is regular Blender geometry, materials and
 renders that you can open and edit.
 
-![Chess set built from text prompts and checked by the agent](docs/gambar/set-catur-dekat.png)
+![Chess set built from text prompts and checked by the agent](docs/images/chess-set-closeup.png)
 
 <sub>Every piece above was built from a text description (no reference photo), then measured: height, base
 diameter, symmetry, watertightness, and the height order of the whole set. The knight uses the CC-BY 4.0
@@ -39,17 +39,18 @@ Ask Claude things like:
 - "make a packshot of this bottle in red, blue and green, 16:9 and 9:16"
 
 Keep Blender open while Claude works. The model shows up in your viewport step by step as it is being built, and the
-last step is the exact mesh that gets saved. See [docs/en/LIVE_PREVIEW.md](docs/en/LIVE_PREVIEW.md).
+last step is the exact mesh that gets saved. See [docs/LIVE_PREVIEW.md](docs/LIVE_PREVIEW.md).
 
 ## What it can do
 
 | Module | What it does |
 |---|---|
-| `perakit` | Builds objects from a text description: Claude writes a shape spec (TOML), the agent turns it into a mesh and runs size, symmetry and manifold checks |
+| `builder` | Builds objects from a text description: Claude writes a shape spec (TOML), the agent turns it into a mesh and runs size, symmetry and manifold checks |
 | `product_shot` | Studio packshots, turntables, color variants and aspect ratios |
-| `modeling_referensi` | Models a real product from reference photos via measured contours |
+| `reference_modeling` | Models a real product from reference photos via measured contours |
 | `tvc` | Short product animatics from a config file |
-| `prosedural` | Procedural trees |
+| `procedural` | Procedural trees |
+| `feedback` | Records your notes on defects and preferences locally and exports an anonymised copy for an issue |
 
 Each check comes with a negative test: a deliberately broken input that the check has to catch. A check that never
 fails on broken input is treated as broken.
@@ -67,7 +68,7 @@ The open Blender only reads files from the workspace folder. Nothing listens on 
 
 The connector is a standard MCP server, so Cursor, VS Code and other MCP clients can use it too. The one-click setup
 only writes the Claude Desktop config; for other clients copy the same command from your Claude config
-([docs/en/CONNECTOR.md](docs/en/CONNECTOR.md)). It is
+([docs/CONNECTOR.md](docs/CONNECTOR.md)). It is
 tested with Claude. Results depend a lot on the model, since the hard part is writing a good shape spec.
 
 ## Usage stats
@@ -77,20 +78,22 @@ which checks passed or failed (check ID and value), the error type if it crashed
 you click in the panel.
 
 It never sends file or project names, paths, prompts, images, meshes or any free text. The server doesn't store IP
-addresses. Turn it off any time with **Turn off** in the panel, or by setting `AGEN3D_TELEMETRY=0`.
+addresses. Turn it off any time with **Turn off** in the panel, or by setting `AGENT3D_TELEMETRY=0`.
 
 The numbers are reviewed every day. A change is only released when it passes the full test suite and a fixed
 benchmark and doesn't make anything slower or worse; data that looks like spam from a single install is dropped.
 
 If you'd rather describe a problem in words, open an issue with the
-[feedback template](https://github.com/breakercreativelabs-collab/hangman/issues/new?template=kiriman-belajar.yml). Details:
-[docs/en/FEEDBACK.md](docs/en/FEEDBACK.md).
+[feedback template](https://github.com/breakercreativelabs-collab/hangman/issues/new?template=feedback-submission.yml). Details:
+[docs/FEEDBACK.md](docs/FEEDBACK.md).
 
 ## Known limitations
 
 - Organic shapes (animals, characters) built from scratch don't look professional yet. For those it adapts openly
   licensed models and checks their quality first.
-- Surface detail is lower than AI mesh generators. That's the trade-off for exact sizes and editable geometry.
+- Surface detail is lower than AI mesh generators. That's the trade-off for exact sizes.
+- `builder` meshes are dense triangles (an SDF is meshed, then decimated), not hand-made quad topology. They are
+  fine to render, measure and 3D-print, but plan on a retopology pass before heavy manual editing.
 - Needs Blender 5.2 (the bundled Python packages are built for its Python 3.13).
 - Final renders want a GPU. CPU works, slowly.
 

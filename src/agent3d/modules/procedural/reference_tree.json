@@ -1,0 +1,56 @@
+{
+ "notes": "Regression baseline metrics for tree v3 (TREE: fixed preset + seed), produced by the old spike code before the refactor (Task 9). The generator is deterministic: the report must match exactly.",
+ "report": [
+  {
+   "tree": "lush seed 7",
+   "branch_points": 1349,
+   "twig_tips": 310,
+   "leaf": 5278,
+   "height_m": 7.89,
+   "crown_width_m": 7.07,
+   "stem_radius_m": 0.32,
+   "QC_points_stacked": 0,
+   "QC_clump_leaf_max_x_median": 5.2,
+   "QC_leaf_in_bottom_ground": 0,
+   "branch_radius_min_max_m": [
+    0.022,
+    0.32
+   ]
+  },
+  {
+   "tree": "lush seed 21",
+   "branch_points": 1299,
+   "twig_tips": 300,
+   "leaf": 5064,
+   "height_m": 7.97,
+   "crown_width_m": 6.96,
+   "stem_radius_m": 0.32,
+   "QC_points_stacked": 0,
+   "QC_clump_leaf_max_x_median": 5.2,
+   "QC_leaf_in_bottom_ground": 0,
+   "branch_radius_min_max_m": [
+    0.022,
+    0.32
+   ]
+  },
+  {
+   "tree": "cone seed 7",
+   "branch_points": 720,
+   "twig_tips": 183,
+   "leaf": 3864,
+   "height_m": 7.64,
+   "crown_width_m": 4.4,
+   "stem_radius_m": 0.24,
+   "QC_points_stacked": 0,
+   "QC_clump_leaf_max_x_median": 4.4,
+   "QC_leaf_in_bottom_ground": 0,
+   "branch_radius_min_max_m": [
+    0.022,
+    0.24
+   ]
+  }
+ ],
+ "stat": {
+  "duplicate_prevented": 219
+ }
+}
